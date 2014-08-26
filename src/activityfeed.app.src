@@ -1,0 +1,13 @@
+{application, activityfeed,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  cowboy
+                 ]},
+  {mod, { activityfeed_app, []}},
+  {env, []}
+ ]}.
