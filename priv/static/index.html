@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>activityfeed</title>
+	</head>
+	<body>
+		<form id="send" action="/users/1/activities" method="POST">
+			<input type="text" size="70" name="content"/>
+			<button type="submit">submit</button>
+		</form>
+		<h2>Activities</h2>
+		<ul id="activities">
+		</ul>
+		<form id="refresh" action="/users/1/activities" method="GET">
+			<button type="submit">refresh</button>
+		</form>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script>
+			$(function() {
+				$('#refresh').submit(function(event) {
+					event.preventDefault();
+					$('#activities').html('');
+
+					$.getJSON($(this).attr('action'), function(data) {
+						$.each(data, function(idx, val){
+							$('#activities').append($('<li>').html(val.content));
+						});
+					});
+
+					return false;
+				});
+			});
+		</script>
+	</body>
+</html>

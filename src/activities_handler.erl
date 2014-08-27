@@ -6,6 +6,7 @@
 -export([content_types_provided/2]).
 -export([content_types_accepted/2]).
 -export([resource_exists/2]).
+-export([known_content_type/2]).
 
 %% Custom callbacks.
 -export([create_activity/2]).
@@ -16,6 +17,9 @@ init(_Transport, _Req, []) ->
 
 allowed_methods(Req, State) ->
 	{[<<"GET">>, <<"POST">>], Req, State}.
+
+known_content_type(Req, State) ->
+	{true, Req, State}.
 
 content_types_provided(Req, State) ->
 	{[
@@ -45,26 +49,15 @@ create_activity(Req, State) ->
 	end.
 
 find_activity(Req, index) ->
-	{_Size, Req2} = cowboy_req:qs_val(<<"size">>, Req, 15),
-	{"[]", Req2, index};
+	{Uid, Req2} = cowboy_req:binding(uid, Req),
+	{Limit, Req3} = cowboy_req:qs_val(<<"limit">>, Req2, <<"15">>),
+	Activities = activityfeed_data:find_all(binary_to_integer(Uid), binary_to_integer(Limit)),
+	{jsx:encode([[{aid, Aid}, {content, Content}] || {Aid, Content} <- Activities]), Req3, index};
 find_activity(Req, Aid) ->
 	{Uid, Req2} = cowboy_req:binding(uid, Req),
 	case activityfeed_data:find(binary_to_integer(Uid), binary_to_integer(Aid)) of
 		false ->
 			{"null", Req, Aid};
-		{_, A} ->
-			{A, Req, Aid}
+		{_, Content} ->
+			{jsx:encode([{aid, Aid}, {content, Content}]), Req, Aid}
 	end.
-
-
-%init(_Type, Req, _Opts) ->
-%    {ok, Req, undefined_state}.
- 
-%handle(Req, State) ->
-%    {ok, Req2} = cowboy_req:reply(200, [{<<"content-type">>, <<"application/json">>}
-%	], <<"{}">>, Req),
-%    {ok, Req2, State}.
- 
-%terminate(_Reason, _Req, _State) ->
-%    ok.
-
