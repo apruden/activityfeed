@@ -17,7 +17,7 @@ start(_StartType, _StartArgs) ->
 			]}
     ]),
     cowboy:start_http(my_http_listener, 100,
-        [{port, 3998}],
+        [{port, 80}],
         [{env, [{dispatch, Dispatch}]}]
     ),
 	ok = create_buckets([user, activities_collection, activities_page]),
