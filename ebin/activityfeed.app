@@ -1,0 +1,9 @@
+{application,activityfeed,
+             [{description,[]},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[kernel,stdlib,cowboy]},
+              {mod,{activityfeed_app,[]}},
+              {env,[]},
+              {modules,[activities_handler,activityfeed_app,activityfeed_data,
+                        activityfeed_id_server,activityfeed_sup]}]}.
